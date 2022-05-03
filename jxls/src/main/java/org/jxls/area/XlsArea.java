@@ -419,7 +419,7 @@ public class XlsArea implements Area {
             fireBeforeTransformCell(srcCell, targetCell, context);
             try {
                 updateCellDataArea(srcCell, targetCell, context);
-                boolean updateRowHeight = parentCommand != null;
+                boolean updateRowHeight = parentCommand != null || transformer.isForwardOnly();
                 transformer.transform(srcCell, targetCell, context, updateRowHeight);
             } catch (Exception e) {
                 transformer.getExceptionHandler().handleTransformException(e, srcCell.toString(), targetCell.toString());
@@ -511,7 +511,7 @@ public class XlsArea implements Area {
                     fireBeforeTransformCell(srcCell, targetCell, context);
                     try {
                         updateCellDataArea(srcCell, targetCell, context);
-                        boolean updateRowHeight = parentCommand != null;
+                        boolean updateRowHeight = parentCommand != null || transformer.isForwardOnly();
                         transformer.transform(srcCell, targetCell, context, updateRowHeight);
                     } catch (Exception e) {
                         transformer.getExceptionHandler().handleTransformException(e, srcCell.toString(), targetCell.toString());
