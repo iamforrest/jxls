@@ -1,7 +1,18 @@
 package org.jxls.area;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.jxls.command.Command;
-import org.jxls.common.*;
+import org.jxls.common.AreaListener;
+import org.jxls.common.AreaRef;
+import org.jxls.common.CellData;
+import org.jxls.common.CellRange;
+import org.jxls.common.CellRef;
+import org.jxls.common.Context;
+import org.jxls.common.Size;
 import org.jxls.common.cellshift.AdjacentCellShiftStrategy;
 import org.jxls.common.cellshift.CellShiftStrategy;
 import org.jxls.common.cellshift.InnerCellShiftStrategy;
@@ -10,11 +21,6 @@ import org.jxls.formula.StandardFormulaProcessor;
 import org.jxls.transform.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Core implementation of {@link Area} interface
@@ -169,7 +175,7 @@ public class XlsArea implements Area {
             int startCol = commandStartCellRef.getCol() - startCellRef.getCol();
             int startRow = commandStartCellRef.getRow() - startCellRef.getRow();
             if (startRow > lastProcessedRow) {
-                transformStaticCells(cellRef, context, lastProcessedRow, 0, startRow, size.getWidth() - 1);
+                transformStaticCells(cellRef, context, startRow, 0, startRow, startCol - 1);
                 lastProcessedRow = startRow;
             }
             CellRef newCell = new CellRef(cellRef.getSheetName(), startRow + cellRef.getRow(), startCol + cellRef.getCol());
@@ -180,7 +186,7 @@ public class XlsArea implements Area {
             int endRow = startRow + commandInitialSize.getHeight() - 1;
             if (heightChange != 0) {
                 cellRange.shiftCellsWithColBlock(startCol, endCol, endRow, heightChange, true);
-                Set<CommandData> commandsToShift = findCommandsForVerticalShift(commandDataList.subList(i + 1, commandDataList.size()),
+                Set<CommandData> commandsToShift = findCommandsForVerticalShift(commandDataList.subList(i+1, commandDataList.size()),
                         startCol, endCol, endRow, heightChange);
                 for (CommandData commandDataToShift : commandsToShift) {
                     CellRef commandDataStartCellRef = commandDataToShift.getStartCellRef();
@@ -259,8 +265,7 @@ public class XlsArea implements Area {
         Set<CommandData> result = new LinkedHashSet<>(commandList.size());
         for (int i = 0, commandListSize = commandList.size(); i < commandListSize; i++) {
             CommandData commandData = commandList.get(i);
-            if (result.contains(commandData))
-                continue; // Should be safe with default equals & hashcode (as references are not changing)
+            if (result.contains(commandData)) continue; // Should be safe with default equals & hashcode (as references are not changing)
 
             CellRef commandDataStartCellRef = commandData.getStartCellRef();
             int relativeCol = commandDataStartCellRef.getCol() - startCellRef.getCol();
@@ -317,8 +322,7 @@ public class XlsArea implements Area {
         int commandListSize = commandList.size();
         for (int i = 0; i < commandListSize; i++) {
             CommandData commandData = commandList.get(i);
-            if (result.contains(commandData))
-                continue; // Should be safe with default equals & hashcode (as references are not changing)
+            if (result.contains(commandData)) continue; // Should be safe with default equals & hashcode (as references are not changing)
 
             CellRef commandDataStartCellRef = commandData.getStartCellRef();
             int relativeRow = commandDataStartCellRef.getRow() - startCellRef.getRow();
