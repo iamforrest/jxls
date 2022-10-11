@@ -1,14 +1,5 @@
 package org.jxls.formula;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.jxls.area.Area;
 import org.jxls.common.AreaRef;
 import org.jxls.common.CellData;
@@ -18,6 +9,10 @@ import org.jxls.util.CellRefUtil;
 import org.jxls.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This is a standard formula processor implementation which takes into account
@@ -32,11 +27,13 @@ public class StandardFormulaProcessor extends AbstractFormulaProcessor {
 
     // TODO method too long
     // TODO partially similar code to FastFormulaProcessor
+
     /**
      * The method transforms all the formula cells according to the command
      * transformations happened during the area processing
+     *
      * @param transformer transformer to use for formula processing
-     * @param area - xls area for which the formula processing is invoked
+     * @param area        - xls area for which the formula processing is invoked
      */
     @Override
     public void processAreaFormulas(Transformer transformer, Area area) {
@@ -118,19 +115,23 @@ public class StandardFormulaProcessor extends AbstractFormulaProcessor {
                     targetFormulaString = formulaCellData.getDefaultValue() != null ? formulaCellData.getDefaultValue() : "0";
                 }
                 if (!targetFormulaString.isEmpty()) {
-                    transformer.setFormula(
-                            new CellRef(
-                                    targetFormulaCellRef.getSheetName(),
-                                    targetFormulaCellRef.getRow(),
-                                    targetFormulaCellRef.getCol()),
-                            targetFormulaString);
+                    try {
+                        transformer.setFormula(
+                                new CellRef(
+                                        targetFormulaCellRef.getSheetName(),
+                                        targetFormulaCellRef.getRow(),
+                                        targetFormulaCellRef.getCol()),
+                                targetFormulaString);
+                    } catch (Exception e) {
+                        logger.warn("processAreaFormulas_error", e);
+                    }
                 }
             }
         }
     }
 
     private List<CellRef> findFormulaCellRefReplacements(Transformer transformer, CellRef targetFormulaCellRef, AreaRef formulaSourceAreaRef,
-            AreaRef formulaTargetAreaRef, Map.Entry<CellRef, List<CellRef>> cellReferenceEntry) {
+                                                         AreaRef formulaTargetAreaRef, Map.Entry<CellRef, List<CellRef>> cellReferenceEntry) {
         CellRef cellReference = cellReferenceEntry.getKey();
         List<CellRef> cellReferenceTargets = cellReferenceEntry.getValue();
         if (cellReference != null && !formulaSourceAreaRef.contains(cellReference)) {
