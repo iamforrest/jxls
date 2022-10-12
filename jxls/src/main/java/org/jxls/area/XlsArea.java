@@ -502,7 +502,6 @@ public class XlsArea implements Area {
             for (int col = 0; col <= relativeEndCol; col++) {
                 if (row == relativeStartRow && col < relativeStartCol) continue;
                 if (!cellRange.isExcluded(row, col)) {
-                    System.out.println(String.format("TRANSFORMING,row=%d,col=%d", row, col));
                     CellRef relativeCell = cellRange.getCell(row, col);
                     CellRef srcCell = new CellRef(sheetName, offsetRow + row, startCol + col);
                     CellRef targetCell = new CellRef(cellRef.getSheetName(), relativeCell.getRow() + cellRef.getRow(), relativeCell.getCol() + cellRef.getCol());
