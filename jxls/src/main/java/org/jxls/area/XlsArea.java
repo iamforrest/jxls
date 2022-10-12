@@ -247,10 +247,6 @@ public class XlsArea implements Area {
     private void transformStaticCells(CellRef cellRef, Context context, AreaRef commandsArea) {
         int relativeStartRow = commandsArea.getFirstCellRef().getRow();
         int relativeStartCol = commandsArea.getFirstCellRef().getCol() + 1;
-        if (transformer.isForwardOnly()) {
-            relativeStartRow = commandsArea.getLastCellRef().getRow() + 1;
-            relativeStartCol = 0;
-        }
         transformStaticCells(cellRef, context, relativeStartRow, relativeStartCol, size.getHeight() - 1, size.getWidth() - 1);
     }
 
@@ -505,7 +501,8 @@ public class XlsArea implements Area {
         for (int row = relativeStartRow; row <= relativeEndRow; row++) {
             for (int col = 0; col <= relativeEndCol; col++) {
                 if (row == relativeStartRow && col < relativeStartCol) continue;
-                if (!cellRange.isExcluded(row, col) && !cellRange.isTransformed(row, col)) {
+                if (!cellRange.isExcluded(row, col)) {
+                    System.out.println(String.format("TRANSFORMING,row=%d,col=%d", row, col));
                     CellRef relativeCell = cellRange.getCell(row, col);
                     CellRef srcCell = new CellRef(sheetName, offsetRow + row, startCol + col);
                     CellRef targetCell = new CellRef(cellRef.getSheetName(), relativeCell.getRow() + cellRef.getRow(), relativeCell.getCol() + cellRef.getCol());
