@@ -113,10 +113,7 @@ public class PoiUtil {
                 if (shape instanceof XSSFPicture) {
                     XSSFPicture srcPic = (XSSFPicture) shape;
                     ClientAnchor srcAnchor = srcPic.getClientAnchor();
-
-                    ClientAnchor destAnchor = destWorkbook.getCreationHelper().createClientAnchor();
-                    BeanUtils.copyProperties(destAnchor, srcAnchor);
-                    Picture picture = drawingPatriarch.createPicture(srcAnchor, atomicInteger.getAndIncrement());
+                    drawingPatriarch.createPicture(srcAnchor, atomicInteger.getAndIncrement());
                 }
             }
         }
