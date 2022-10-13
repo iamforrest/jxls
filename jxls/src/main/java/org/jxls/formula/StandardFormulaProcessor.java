@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * This is a standard formula processor implementation which takes into account
@@ -69,6 +70,13 @@ public class StandardFormulaProcessor extends AbstractFormulaProcessor {
                         List<CellRef> replacementCells = findFormulaCellRefReplacements(
                                 transformer, targetFormulaCellRef, formulaSourceAreaRef,
                                 formulaTargetAreaRef, cellRefEntry);
+                        // remove duplicated
+                        if (replacementCells != null) {
+                            replacementCells = replacementCells.stream()
+                                    .collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(CellRef::compareTo)),
+                                            ArrayList::new));
+                        }
+
                         if (formulaCellData.getFormulaStrategy() == CellData.FormulaStrategy.BY_COLUMN) {
                             // for BY_COLUMN formula strategy we take only a subset of the cells
                             replacementCells = Util.createTargetCellRefListByColumn(targetFormulaCellRef, replacementCells,
