@@ -83,7 +83,9 @@ public class StandardFormulaProcessor extends AbstractFormulaProcessor {
                                     usedCellRefs);
                             usedCellRefs.addAll(replacementCells);
                         }
-                        String replacementString = Util.createTargetCellRef(replacementCells);
+                        // Only replace with the last cell if the formula refer to ONLY one cell
+                        boolean oneCell = Pattern.compile("^[A-Z]+[1-9]+$").matcher(targetFormulaString).find();
+                        String replacementString = Util.createTargetCellRef(oneCell && replacementCells != null && replacementCells.size() > 0 ? Arrays.asList(replacementCells.get(replacementCells.size() - 1)) : replacementCells);
                         if (targetFormulaString.startsWith("SUM")
                                 && Util.countOccurences(replacementString, ',') >= MAX_NUM_ARGS_FOR_SUM) {
                             // Excel doesn't support more than 255 arguments in functions.
