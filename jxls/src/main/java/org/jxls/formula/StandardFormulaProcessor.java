@@ -1,5 +1,6 @@
 package org.jxls.formula;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.jxls.area.Area;
 import org.jxls.common.AreaRef;
 import org.jxls.common.CellData;
@@ -83,9 +84,13 @@ public class StandardFormulaProcessor extends AbstractFormulaProcessor {
                                     usedCellRefs);
                             usedCellRefs.addAll(replacementCells);
                         }
-                        // Only replace with the last cell if the formula refer to ONLY one cell
-                        boolean oneCell = Pattern.compile("^[A-Z]+[1-9]+$").matcher(targetFormulaString).find();
-                        String replacementString = Util.createTargetCellRef(oneCell && replacementCells != null && replacementCells.size() > 0 ? Arrays.asList(replacementCells.get(replacementCells.size() - 1)) : replacementCells);
+                        // Only replace with the last cell if the formula refer to the cells with the same column
+                        boolean oneCell = Pattern.compile("^[A-Z]+[1-9]+$").matcher(targetFormulaString).find() || Pattern.compile("^SUM\\([A-Z]+[1-9]+\\)$").matcher(targetFormulaString).find();
+                        if (oneCell && CollectionUtils.isNotEmpty(replacementCells) && replacementCells.size() > 1) {
+                            CellRef last = replacementCells.get(replacementCells.size() - 1);
+                            replacementCells.removeIf(cellRef -> cellRef.getCol() != last.getCol());
+                        }
+                        String replacementString = Util.createTargetCellRef(replacementCells);
                         if (targetFormulaString.startsWith("SUM")
                                 && Util.countOccurences(replacementString, ',') >= MAX_NUM_ARGS_FOR_SUM) {
                             // Excel doesn't support more than 255 arguments in functions.
