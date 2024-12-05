@@ -12,9 +12,9 @@ import org.jxls.common.JxlsException;
  * <li>Probably you must recreate the Excel file from scratch. Use of Microsoft Excel and XLSX format is recommended.</li></ol>
  */
 public class CannotOpenWorkbookException extends JxlsException {
-    private static final long serialVersionUID = -3618771481378341600L;
+	private static final long serialVersionUID = -3618771481378341600L;
 
-    public CannotOpenWorkbookException(Throwable e) {
-        super(e);
-    }
+	public CannotOpenWorkbookException(Throwable e) {
+		super(e);
+	}
 }

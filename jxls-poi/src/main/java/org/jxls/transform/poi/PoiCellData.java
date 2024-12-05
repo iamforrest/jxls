@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Cell data wrapper for POI cell
- * 
+ *
  * @author Leonid Vysochyn
  */
 public class PoiCellData extends org.jxls.common.CellData {
@@ -160,7 +160,8 @@ public class PoiCellData extends org.jxls.common.CellData {
                 }
             }
             updateCellStyle(cell, targetCellStyle);
-            poiRowData.getPoiSheetData().updateConditionalFormatting(this, cell);
+            // 如果数据多的时候，这个性能损耗太大，禁止掉
+            // poiRowData.getPoiSheetData().updateConditionalFormatting(this, cell);
         }
     }
 
