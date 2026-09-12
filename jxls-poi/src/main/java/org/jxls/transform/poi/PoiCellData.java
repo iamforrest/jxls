@@ -19,11 +19,13 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.jxls.common.CellRef;
 import org.jxls.common.Context;
 import org.jxls.common.JxlsException;
 import org.jxls.util.Util;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,6 +105,10 @@ public class PoiCellData extends org.jxls.common.CellData {
             case STRING:
                 richTextString = cell.getRichStringCellValue();
                 cellValue = richTextString.getString();
+                if (richTextString instanceof XSSFRichTextString) {
+                    richTextString = new XSSFRichTextString(
+                            (CTRst) ((XSSFRichTextString) richTextString).getCTRst().copy());
+                }
                 cellType = CellType.STRING;
                 break;
             case BOOLEAN:
